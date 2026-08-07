@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone 14 1x to 2x Portrait Converter | iPhone 14 2x Portrait App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="background-decor">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+    </div>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-badge">
+                <span class="camera-icon">📸</span> iPhone 14 Portrait Tool
+            </div>
+            <h1>iPhone 14 1x ➡️ 2x Portrait Blur Converter</h1>
+            <p class="subtitle">ඔබේ 1x ෆොටෝ 2x zoom වලට drag කරමින් අභිමත ස්ථානය crop කර portrait blur එකතු කර ගන්න</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Control Panel & Upload -->
+            <section class="card upload-section">
+                <form id="uploadForm" class="upload-form">
+                    <input type="hidden" id="cropX" name="crop_x">
+                    <input type="hidden" id="cropY" name="crop_y">
+                    <input type="hidden" id="cropW" name="crop_w">
+                    <input type="hidden" id="cropH" name="crop_h">
+
+                    <div class="drop-zone" id="dropZone">
+                        <input type="file" id="fileInput" name="photo" accept="image/*" class="file-input" required>
+                        <div class="drop-zone-content">
+                            <div class="upload-icon">📷</div>
+                            <h3>ඔබේ 1x iPhone Photo එක මෙතැනට Drag & Drop කරන්න</h3>
+                            <p>හෝ ඔබේ පරිගණකයෙන් Upload කිරීමට Browse කරන්න (JPG, PNG, WEBP)</p>
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">Select Photo</button>
+                        </div>
+                        <div class="file-preview-info" id="filePreviewInfo" style="display: none;">
+                            <span class="file-name" id="fileName">photo.jpg</span>
+                            <button type="button" class="btn-clear" id="btnClearFile">✕ Change Photo</button>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Cropper Container -->
+                    <div class="cropper-wrapper" id="cropperWrapper" style="display: none;">
+                        <div class="cropper-header">
+                            <h4>🎯 ඡායාරූපයෙන් ඔබට අවශ්‍ය කොටස Drag කර තෝරාගන්න (Move/Resize Crop Box)</h4>
+                            <p>2x Focus area එක ඔයාට කැමති ලෙස රූපය මත Drag කරන්න</p>
+                        </div>
+                        <div class="cropper-container-box">
+                            <img id="cropperImage" alt="Interactive Crop Target">
+                        </div>
+                    </div>
+
+                    <div class="controls-grid">
+                        <div class="control-group">
+                            <label for="zoomRange">
+                                <span>Zoom Factor (ක්‍රොප් 2x):</span>
+                                <strong id="zoomVal">2.0x</strong>
+                            </label>
+                            <input type="range" id="zoomRange" name="zoom" min="1.2" max="3.0" step="0.1" value="2.0">
+                        </div>
+
+                        <div class="control-group">
+                            <label for="blurRange">
+                                <span>Portrait Blur Radius (බ්ලර් එක):</span>
+                                <strong id="blurVal">25px</strong>
+                            </label>
+                            <input type="range" id="blurRange" name="blur" min="5" max="60" step="1" value="25">
+                        </div>
+
+                        <!-- Pro Studio Edge Controls -->
+                        <div class="control-group">
+                            <label for="edgeShiftRange">
+                                <span>Edge Inset / Shift (දාර අභ්‍යන්තරයට ගැනීම):</span>
+                                <strong id="edgeShiftVal">-2px</strong>
+                            </label>
+                            <input type="range" id="edgeShiftRange" name="edge_shift" min="-5" max="5" step="1" value="-2">
+                            <small class="help-text">Dark halos/outlines නැති කිරීමට සෘණ (-2px) අගය යොදන්න.</small>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="edgeBlurRange">
+                                <span>Edge Softness / Feathering (දාර සිනිඳු බව):</span>
+                                <strong id="edgeBlurVal">4px</strong>
+                            </label>
+                            <input type="range" id="edgeBlurRange" name="edge_blur" min="0" max="15" step="1" value="4">
+                        </div>
+
+                        <div class="control-group">
+                            <label for="modelSelect">
+                                <span>AI Segmentation Model:</span>
+                            </label>
+                            <select id="modelSelect" name="model_name" class="select-input">
+                                <option value="u2net_human_seg" selected>🎯 Human Portrait Pro (Best for People & Hair)</option>
+                                <option value="isnet-general-use">🌟 IS-Net High Detail (Ultra Precision)</option>
+                                <option value="u2netp">⚡ Fast Light (Speed Focus)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group full-width toggle-group">
+                            <label class="checkbox-card">
+                                <input type="checkbox" id="antiHaloCheck" name="anti_halo" value="true" checked>
+                                <div class="checkbox-label">
+                                    <strong>✨ Anti-Halo Bleed Inpainting Filter (Recommended)</strong>
+                                    <small>Background Blur එකෙහි මිනිසා වටා අඳුරු සෙවනැලි (Dark Halos) ඇති වීම වැළැක්වීම සඳහා Background Inpainting සිදු කරයි.</small>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="control-group full-width">
+                            <label>Blur Mode (බ්ලර් වන ආකාරය):</label>
+                            <div class="radio-options">
+                                <label class="radio-card active">
+                                    <input type="radio" name="mode" value="ai" checked>
+                                    <div class="radio-label">
+                                        <strong>🤖 AI Subject Isolation (Recommended)</strong>
+                                        <small>මිනිසා/විෂය හඳුනාගෙන Background එක විතරක් blur කරයි</small>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="mode" value="focal">
+                                    <div class="radio-label">
+                                        <strong>🎯 Radial Focal Blur</strong>
+                                        <small>මැද කොටස පැහැදිලිව තබා අවට smooth gradient blur එකක් දෙයි</small>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="mode" value="simple">
+                                    <div class="radio-label">
+                                        <strong>🌫️ Gaussian Blur</strong>
+                                        <small>සම්පූර්ණ ක්‍රොප් ඡායාරූපයටම Gaussian blur එකතු කරයි</small>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="btnProcess">
+                        <span class="btn-text">✨ Generate 2x Portrait Photo</span>
+                        <div class="spinner" style="display: none;"></div>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Results Section -->
+            <section class="card results-section" id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <h2>📸 Output Preview & Comparison</h2>
+                    <a id="btnDownload" class="btn btn-success" download>⬇️ Download 2x Portrait Image</a>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="img-box">
+                        <div class="img-badge">Original 1x Photo</div>
+                        <img id="imgOriginal" alt="Original Photo">
+                        <div class="img-meta" id="metaOriginal">Dimension: -</div>
+                    </div>
+                    <div class="img-box highlighted">
+                        <div class="img-badge portrait-badge">✨ 2x Portrait Output</div>
+                        <img id="imgProcessed" alt="2x Portrait Photo">
+                        <div class="img-meta" id="metaProcessed">Dimension: -</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>Developed with Python 🐍, Pillow & AI Image Processing for iPhone 14 Photography</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
