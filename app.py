@@ -93,5 +93,7 @@ def download(filename):
     return send_from_directory(PROCESSED_FOLDER, filename, as_attachment=True)
 
 if __name__ == '__main__':
-    print("Starting iPhone 14 2x Portrait Web App on http://127.0.0.1:5000")
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    host = os.environ.get('HOST', '0.0.0.0')
+    print(f"Starting iPhone 14 2x Portrait Web App (PWA Supported) on http://{host}:{port}")
+    app.run(host=host, port=port, debug=False)

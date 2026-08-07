@@ -1,0 +1,28 @@
+{
+  "name": "iPhone 14 Portrait Pro",
+  "short_name": "Portrait 2x",
+  "description": "Convert iPhone 1x photos into high precision 2x Studio Portrait photos with AI depth blur.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/static/icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "/static/icons/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180",
+      "purpose": "any maskable"
+    }
+  ]
+}

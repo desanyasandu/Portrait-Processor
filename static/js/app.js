@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Register PWA Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/static/sw.js')
+            .then(reg => console.log('[PWA] Service Worker registered:', reg.scope))
+            .catch(err => console.warn('[PWA] Service Worker registration failed:', err));
+    }
+
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
     const filePreviewInfo = document.getElementById('filePreviewInfo');
